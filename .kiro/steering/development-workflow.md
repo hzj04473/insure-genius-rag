@@ -2,17 +2,26 @@
 
 ## 일반적인 개발 작업 순서
 
+### ⚠️ 최초 개발환경 설정 (필수)
+
+**반드시 setup-guide.md를 완전히 따라하고 시작하세요!**
+
 ### 1. 새로운 기능 개발 시
 
 ```bash
+# 0. 개발환경 확인 (최초 1회)
+python --version  # 3.8+ 확인
+which python      # .venv/bin/python 확인
+pip list | grep -E "(Django|openai|pinecone|torch)"
+
 # 1. 브랜치 생성 (선택사항)
 git checkout -b feature/새기능명
 
-# 2. 가상환경 활성화
+# 2. 가상환경 활성화 확인
 source .venv/bin/activate
 
-# 3. 의존성 확인
-pip install -r requirements.txt
+# 3. 환경 변수 확인
+python manage.py check
 
 # 4. 개발 서버 실행
 python manage.py runserver
@@ -40,6 +49,39 @@ python manage.py test
 python manage.py collectstatic
 ```
 
+### 4. AI 서비스 연동 테스트
+
+```bash
+# OpenAI API 테스트
+python manage.py shell
+>>> from insurance_app.llm_client import LLMClient
+>>> client = LLMClient()
+>>> client.test_connection()
+
+# Pinecone 연결 테스트
+>>> from insurance_app.pinecone_client import PineconeClient
+>>> pc = PineconeClient()
+>>> pc.test_connection()
+```
+
+### 5. 현재 프로젝트 특화 작업 순서
+
+#### 리팩토링 작업 시
+
+```bash
+# 1. 백업 생성
+cp -r accident_project accident_project_backup_$(date +%Y%m%d_%H%M%S)
+
+# 2. 레거시 파일 정리
+rm "accident_project/views old.py"
+rm "accident_project/views old_2(0824_01s).py"
+
+# 3. 폴더 구조 정리 (중복 경로 제거)
+# 4. 마이그레이션 실행
+python manage.py makemigrations
+python manage.py migrate
+```
+
 ## 앱별 작업 우선순위
 
 ### insurance_app (핵심 보험 기능)
@@ -54,16 +96,16 @@ python manage.py collectstatic
 
 **우선순위: 높음**
 
-- 레거시 파일 정리 (views old.py 등)
-- 모델 필드 일관성 확보
+- 레거시 파일 정리 (`views old.py`, `views old_2(0824_01s).py` 등)
+- 모델 필드 일관성 확보 (damages_raw JSONField 변경)
 - PDF 생성 기능 안정화
 
 ### insurance_portal (지식 베이스)
 
 **우선순위: 중간**
 
-- 0826-5 폴더 구조 정리
-- 챗봇 기능 통합
+- `0826-5/` 폴더 구조 정리 (중복 경로 제거)
+- 챗봇 기능 통합 (`chatbot.js`, `fault_answer.js` 통합)
 - 프론트엔드 디자인 통합
 
 ## 코드 품질 가이드
@@ -190,3 +232,35 @@ class CustomUserTestCase(TestCase):
 - [ ] 데이터베이스 쿼리 성능 확인
 
 이 워크플로우를 따라 개발하면 일관성 있고 안정적인 코드를 유지할 수 있습니다.
+
+## 배포 관련 추가 정보
+
+### Docker 배포 설정
+
+```dockerfile
+FROM python:3.10-slim
+
+# 시스템 패키지 설치 (OCR 지원)
+RUN apt-get update && apt-get install -y \
+    gcc g++ libpq-dev tesseract-ocr tesseract-ocr-kor poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "insurance_project.wsgi:application"]
+```
+
+### 운영 환경 체크리스트
+
+- [ ] DEBUG = False 설정
+- [ ] SECRET_KEY 환경 변수로 관리
+- [ ] ALLOWED_HOSTS 적절히 설정
+- [ ] SSL 인증서 설정
+- [ ] 데이터베이스 백업 시스템 구축
+- [ ] 로그 모니터링 설정

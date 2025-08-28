@@ -20,6 +20,30 @@
 - JavaScript 파일들의 중복 기능 (`chatbot.js`, `fault_answer.js` 등)
 - CSS 스타일의 불일치
 
+## 🚨 리팩토링 시작 전 필수 준비사항
+
+### 개발환경 100% 완료 확인
+
+- [ ] **setup-guide.md 완전히 따라하기 완료**
+- [ ] 가상환경 활성화 및 의존성 설치 완료
+- [ ] .env 파일 설정 및 API 키 확인
+- [ ] `python manage.py runserver` 정상 실행 확인
+- [ ] 모든 핵심 기능 정상 작동 확인
+
+### 백업 생성 (필수)
+
+```bash
+# 전체 프로젝트 백업
+cp -r . ../insurance-platform-backup-$(date +%Y%m%d_%H%M%S)
+
+# 데이터베이스 백업
+cp db.sqlite3 db.sqlite3.backup
+
+# Git 커밋 (현재 상태 저장)
+git add .
+git commit -m "리팩토링 시작 전 백업"
+```
+
 ## 작업 순서 및 우선순위
 
 ### Phase 1: 구조 정리 (최우선)
