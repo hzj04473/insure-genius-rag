@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 # 환경변수에서 키 로드 (settings.py 또는 .env 이용)
 import dotenv
+
 dotenv.load_dotenv()
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
@@ -22,10 +23,11 @@ pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 if INDEX_NAME not in pinecone.list_indexes():
     pinecone.create_index(
         INDEX_NAME,
-        dimension=768,  # ko-sroberta-multitask는 768
-        metric="cosine"
+        dimension=int(os.getenv("EMBED_DIM", "768")),  # 환경 변수에서 차원 읽기
+        metric="cosine",
     )
 index = pinecone.Index(INDEX_NAME)
+
 
 # 3. 텍스트 청크 함수
 def chunk_text(text, max_length=500, overlap=50):
@@ -40,6 +42,7 @@ def chunk_text(text, max_length=500, overlap=50):
             chunks.append(chunk.strip())
         start += max_length - overlap
     return chunks
+
 
 # 4. PDF 파싱 및 벡터 업로드
 def process_pdf(company, pdf_path):
@@ -62,24 +65,27 @@ def process_pdf(company, pdf_path):
                 vectors.append((vec_id, chunk, meta))
     return vectors
 
+
 def upload_vectors_to_pinecone(vectors, batch_size=32):
     """벡터 임베딩 및 pinecone 업로드 (배치 처리)"""
     for i in tqdm(range(0, len(vectors), batch_size)):
-        batch = vectors[i:i+batch_size]
+        batch = vectors[i : i + batch_size]
         ids = [v[0] for v in batch]
         texts = [v[1] for v in batch]
         metas = [v[2] for v in batch]
         embs = model.encode(texts, show_progress_bar=False)
         index.upsert(
             vectors=[
-                (id, emb.tolist(), meta)
-                for id, emb, meta in zip(ids, embs, metas)
+                (id, emb.tolist(), meta) for id, emb, meta in zip(ids, embs, metas)
             ]
         )
 
+
 def main():
     all_vectors = []
-    company_dirs = [d for d in os.listdir(DOC_ROOT) if os.path.isdir(os.path.join(DOC_ROOT, d))]
+    company_dirs = [
+        d for d in os.listdir(DOC_ROOT) if os.path.isdir(os.path.join(DOC_ROOT, d))
+    ]
     for company in tqdm(company_dirs, desc="회사별 처리"):
         company_path = os.path.join(DOC_ROOT, company)
         pdf_files = [f for f in os.listdir(company_path) if f.lower().endswith(".pdf")]
@@ -90,6 +96,7 @@ def main():
     print(f"총 청크 개수: {len(all_vectors)}")
     upload_vectors_to_pinecone(all_vectors)
     print("Pinecone 업로드 완료")
+
 
 if __name__ == "__main__":
     main()
