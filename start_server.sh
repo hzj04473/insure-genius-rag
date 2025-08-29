@@ -30,10 +30,13 @@ if [ "$DEBUG" = "False" ]; then
     python manage.py collectstatic --noinput
 fi
 
+# 포트 설정 (환경 변수에서 가져오기)
+PORT=${PORT:-8000}
+
 # 서버 시작 방식 선택
 if [ "$1" = "dev" ]; then
     echo "🔧 개발 서버로 시작합니다..."
-    python manage.py runserver 0.0.0.0:945
+    python manage.py runserver 0.0.0.0:$PORT
 elif [ "$1" = "gunicorn" ]; then
     echo "🏭 Gunicorn으로 운영 서버를 시작합니다..."
     gunicorn -c gunicorn.conf.py insurance_project.wsgi:application
@@ -43,5 +46,5 @@ else
     echo "  ./start_server.sh gunicorn  # 운영 서버"
     echo ""
     echo "기본적으로 개발 서버를 시작합니다..."
-    python manage.py runserver 0.0.0.0:945
+    python manage.py runserver 0.0.0.0:$PORT
 fi

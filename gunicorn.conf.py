@@ -3,7 +3,7 @@ import multiprocessing
 import os
 
 # 서버 소켓
-bind = "0.0.0.0:945"
+bind = f"0.0.0.0:{os.getenv('PORT', '8000')}"
 backlog = 2048
 
 # 워커 프로세스
@@ -25,7 +25,7 @@ loglevel = "info"
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 
 # 프로세스 이름
-proc_name = "insurance_platform"
+proc_name = os.getenv("APP_NAME", "django_app")
 
 # 보안
 limit_request_line = 4094
