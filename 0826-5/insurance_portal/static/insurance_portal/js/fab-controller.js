@@ -14,7 +14,7 @@ class FloatingFABController {
     this.scrollTimeout = null;
     this.lastScrollY = window.scrollY;
     this.debugMode = false;
-    
+
     this.init();
   }
 
@@ -35,11 +35,11 @@ class FloatingFABController {
       this.disableLegacyFABs();
       this.preventEventConflicts();
       this.initModalStateTracking();
-      
+
       // 기본 초기화
       this.bindEvents();
       this.initScrollTracking();
-      
+
       // 디버그 모드 (개발 시에만)
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         this.enableDebugMode();
@@ -60,10 +60,10 @@ class FloatingFABController {
       });
 
       // 서브 버튼 클릭 (기능 실행)
-      this.actionItems.forEach(item => {
+      this.actionItems.forEach((item) => {
         const button = item.querySelector('.fab-sub-btn');
         const action = item.dataset.action;
-        
+
         if (button && action) {
           button.addEventListener('click', (e) => {
             e.preventDefault();
@@ -73,10 +73,10 @@ class FloatingFABController {
       });
 
       // 라벨 클릭 (서브 버튼과 동일한 동작)
-      this.actionItems.forEach(item => {
+      this.actionItems.forEach((item) => {
         const label = item.querySelector('.fab-label');
         const action = item.dataset.action;
-        
+
         if (label && action) {
           label.addEventListener('click', (e) => {
             e.preventDefault();
@@ -114,9 +114,13 @@ class FloatingFABController {
   initScrollTracking() {
     try {
       // 스크롤 이벤트 리스너
-      window.addEventListener('scroll', () => {
-        this.handleScroll();
-      }, { passive: true });
+      window.addEventListener(
+        'scroll',
+        () => {
+          this.handleScroll();
+        },
+        { passive: true }
+      );
 
       // 리사이즈 이벤트 (뷰포트 변경 시 위치 재조정)
       window.addEventListener('resize', () => {
@@ -134,10 +138,10 @@ class FloatingFABController {
     try {
       const currentScrollY = window.scrollY;
       const scrollDelta = currentScrollY - this.lastScrollY;
-      
+
       // 스크롤 방향에 따른 FAB 위치 조정
       this.updateFABPosition(scrollDelta);
-      
+
       this.lastScrollY = currentScrollY;
 
       // 스크롤 중일 때는 확장된 상태를 접기
@@ -157,13 +161,13 @@ class FloatingFABController {
       const viewportHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const scrollProgress = window.scrollY / (documentHeight - viewportHeight);
-      
+
       // 스크롤 진행률에 따라 FAB 위치 조정 (30% ~ 70% 범위에서 움직임)
       const minPosition = 30; // 뷰포트 상단으로부터 30%
       const maxPosition = 70; // 뷰포트 상단으로부터 70%
       const positionRange = maxPosition - minPosition;
-      const newPosition = minPosition + (scrollProgress * positionRange);
-      
+      const newPosition = minPosition + scrollProgress * positionRange;
+
       this.fabContainer.style.top = `${newPosition}%`;
       this.fabContainer.style.bottom = 'auto';
       this.fabContainer.style.transform = 'translateY(-50%)';
@@ -177,12 +181,12 @@ class FloatingFABController {
       // 뷰포트 크기에 따른 위치 조정
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-    
+
       // 초기 위치 강제 설정
       this.fabContainer.style.position = 'fixed';
       this.fabContainer.style.display = 'block';
       this.fabContainer.style.visibility = 'visible';
-      
+
       if (viewportWidth < 768) {
         this.fabContainer.style.right = '16px';
       } else {
@@ -192,7 +196,7 @@ class FloatingFABController {
       // 초기에는 중앙 고정
       this.fabContainer.style.top = '50%';
       this.fabContainer.style.transform = 'translateY(-50%)';
-      
+
       if (viewportHeight < 600) {
         this.fabContainer.style.top = '40%';
       }
@@ -248,7 +252,6 @@ class FloatingFABController {
     }
   }
 
-
   handleActionClick(action, itemElement) {
     try {
       // 이전 활성화 해제
@@ -258,10 +261,10 @@ class FloatingFABController {
 
       // 새로운 액션 활성화
       this.setActiveAction(action, itemElement);
-      
+
       // 기능 실행
       this.executeActionEnhanced(action);
-      
+
       // 잠시 후 메뉴 접기
       setTimeout(() => {
         this.collapseActions();
@@ -275,13 +278,13 @@ class FloatingFABController {
     try {
       this.activeAction = action;
       itemElement.classList.add('active');
-      
+
       // 접근성
       const button = itemElement.querySelector('.fab-sub-btn');
       if (button) {
         button.setAttribute('aria-pressed', 'true');
       }
-      
+
       if (this.debugMode) {
         console.log(`Active action set: ${action}`);
       }
@@ -301,11 +304,11 @@ class FloatingFABController {
             button.setAttribute('aria-pressed', 'false');
           }
         }
-        
+
         if (this.debugMode) {
           console.log(`Active action cleared: ${this.activeAction}`);
         }
-        
+
         this.activeAction = null;
       }
     } catch (error) {
@@ -318,14 +321,14 @@ class FloatingFABController {
     try {
       // Bootstrap 모달 이벤트 감지
       const bootstrapModals = ['guideModal', 'knowhowModal'];
-      
-      bootstrapModals.forEach(modalId => {
+
+      bootstrapModals.forEach((modalId) => {
         const modalElement = document.getElementById(modalId);
         if (modalElement) {
           modalElement.addEventListener('shown.bs.modal', () => {
             this.syncActiveState(this.getActionByModalId(modalId));
           });
-          
+
           modalElement.addEventListener('hidden.bs.modal', () => {
             this.clearActiveAction();
           });
@@ -345,7 +348,7 @@ class FloatingFABController {
               }
             }
           }
-          
+
           if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
             const target = mutation.target;
             if (target.id === 'claim-knowledge-modal' && target.classList.contains('show')) {
@@ -357,9 +360,9 @@ class FloatingFABController {
 
       const claimModal = document.getElementById('claim-knowledge-modal');
       if (claimModal) {
-        observer.observe(claimModal, { 
-          attributes: true, 
-          attributeFilter: ['hidden', 'class'] 
+        observer.observe(claimModal, {
+          attributes: true,
+          attributeFilter: ['hidden', 'class'],
         });
       }
 
@@ -378,10 +381,10 @@ class FloatingFABController {
             }
           });
         });
-        
-        chatbotObserver.observe(chatbotContainer, { 
-          attributes: true, 
-          attributeFilter: ['style'] 
+
+        chatbotObserver.observe(chatbotContainer, {
+          attributes: true,
+          attributeFilter: ['style'],
         });
       }
     } catch (error) {
@@ -392,10 +395,10 @@ class FloatingFABController {
   // 모달 ID로 액션 타입 찾기
   getActionByModalId(modalId) {
     const modalActionMap = {
-      'guideModal': 'guide',
-      'knowhowModal': 'knowhow',
+      guideModal: 'guide',
+      knowhowModal: 'knowhow',
       'claim-knowledge-modal': 'claim-knowledge',
-      'chatbot-container': 'chatbot'
+      'chatbot-container': 'chatbot',
     };
     return modalActionMap[modalId];
   }
@@ -405,7 +408,7 @@ class FloatingFABController {
     try {
       if (this.activeAction !== action) {
         this.clearActiveAction();
-        
+
         if (action) {
           const itemElement = document.querySelector(`[data-action="${action}"]`);
           if (itemElement) {
@@ -423,16 +426,16 @@ class FloatingFABController {
     try {
       const legacySelectors = [
         '#guide-fab',
-        '#weekly-fab', 
+        '#weekly-fab',
         '#claim-knowledge-fab',
         '#chatbot-fab',
         '.fab-wrap',
-        '.side-actions'
+        '.side-actions',
       ];
 
-      legacySelectors.forEach(selector => {
+      legacySelectors.forEach((selector) => {
         const elements = document.querySelectorAll(selector);
-        elements.forEach(el => {
+        elements.forEach((el) => {
           el.style.display = 'none';
           el.setAttribute('aria-hidden', 'true');
         });
@@ -466,7 +469,7 @@ class FloatingFABController {
       if (this.debugMode) {
         console.log(`FAB Action executed: ${action}`);
       }
-      
+
       switch (action) {
         case 'claim-knowledge':
           this.executeClaimKnowledge();
@@ -490,13 +493,16 @@ class FloatingFABController {
 
   executeClaimKnowledge() {
     try {
-      if (typeof window.openClaimKnowledge === "function") {
-        window.openClaimKnowledge();   // 데이터 로딩 + 모달 표시
+      if (typeof window.openClaimKnowledge === 'function') {
+        window.openClaimKnowledge(); // 데이터 로딩 + 모달 표시
         return;
       }
-      // 폴백: 모달만 표시
+      // 폴백: 모달 유틸리티 사용
       const modal = document.getElementById('claim-knowledge-modal');
-      if (modal) {
+      if (modal && window.modalUtils) {
+        window.modalUtils.openModal('claim-knowledge-modal', modal);
+      } else if (modal) {
+        // 기존 방식 폴백
         modal.removeAttribute('hidden');
         requestAnimationFrame(() => {
           modal.classList.add('show');
@@ -511,43 +517,43 @@ class FloatingFABController {
 
   executeGuide() {
     try {
-        // 전역 오프너가 있으면 데이터 로딩+모달 표시를 한 번에
-        if (typeof window.openGuide === 'function') {
+      // 전역 오프너가 있으면 데이터 로딩+모달 표시를 한 번에
+      if (typeof window.openGuide === 'function') {
         window.openGuide();
         return;
-        }
-        // 폴백: 기존 버튼 클릭 또는 단순 모달 show
-        const guideModal = document.getElementById('guideModal');
-        if (guideModal && typeof bootstrap !== 'undefined') {
+      }
+      // 폴백: 기존 버튼 클릭 또는 단순 모달 show
+      const guideModal = document.getElementById('guideModal');
+      if (guideModal && typeof bootstrap !== 'undefined') {
         const modal = new bootstrap.Modal(guideModal);
         modal.show();
-        } else {
+      } else {
         const legacyBtn = document.getElementById('guide-fab');
         if (legacyBtn && typeof legacyBtn.click === 'function') legacyBtn.click();
         else console.warn('가이드 모달을 열 수 없습니다.');
-        }
+      }
     } catch (error) {
-        this.handleError(error, 'executeGuide');
+      this.handleError(error, 'executeGuide');
     }
   }
 
   executeKnowhow() {
     try {
-        // 권장: 전역 오프너 사용
-        if (typeof window.openKnowhow === 'function') {
+      // 권장: 전역 오프너 사용
+      if (typeof window.openKnowhow === 'function') {
         window.openKnowhow();
         return;
-        }
-        // 폴백: 직접 모달 표시 (커스텀 모달)
-        const el = document.getElementById('knowhow-modal'); // <-- 하이픈 ID로 수정
-        if (el) {
+      }
+      // 폴백: 직접 모달 표시 (커스텀 모달)
+      const el = document.getElementById('knowhow-modal'); // <-- 하이픈 ID로 수정
+      if (el) {
         el.removeAttribute('hidden');
         requestAnimationFrame(() => el.classList.add('show'));
-        } else {
+      } else {
         console.warn('knowhow-modal을 찾을 수 없습니다.');
-        }
+      }
     } catch (e) {
-        this.handleError(e, 'executeKnowhow');
+      this.handleError(e, 'executeKnowhow');
     }
   }
 
@@ -575,12 +581,12 @@ class FloatingFABController {
   // 에러 처리 및 복구
   handleError(error, context) {
     console.error(`FAB Controller Error in ${context}:`, error);
-    
+
     // 상태 초기화
     this.isExpanded = false;
     this.fabContainer?.classList.remove('expanded');
     this.clearActiveAction();
-    
+
     // 사용자에게 알림 (선택적)
     this.announceToScreenReader('일시적인 오류가 발생했습니다. 다시 시도해 주세요.');
   }
@@ -589,10 +595,10 @@ class FloatingFABController {
   enableDebugMode() {
     this.debugMode = true;
     console.log('FAB Debug Mode Enabled');
-    
+
     // 상태 변화 로깅
     const originalSetActiveAction = this.setActiveAction;
-    this.setActiveAction = function(action, itemElement) {
+    this.setActiveAction = function (action, itemElement) {
       console.log(`Setting active action: ${action}`);
       return originalSetActiveAction.call(this, action, itemElement);
     };
@@ -610,9 +616,9 @@ class FloatingFABController {
       announcement.style.height = '1px';
       announcement.style.overflow = 'hidden';
       announcement.textContent = message;
-      
+
       document.body.appendChild(announcement);
-      
+
       setTimeout(() => {
         document.body.removeChild(announcement);
       }, 1000);

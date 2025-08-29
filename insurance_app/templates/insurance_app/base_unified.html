@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}보험 플랫폼{% endblock %}</title>
+
+    <!-- 통합 디자인 시스템 CSS -->
+    <link rel="stylesheet" href="{% static 'insurance_app/css/common-theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'insurance_app/css/components.css' %}" />
+
+    <!-- 페이지별 추가 CSS -->
+    {% block extra_css %}{% endblock %}
+
+    <style>
+      /* 기본 레이아웃 스타일 */
+      body {
+        font-family: var(--font-family);
+        margin: 0;
+        padding: 0;
+        background: var(--primary-gradient);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .main-container {
+        background: var(--bg-card);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        text-align: center;
+        max-width: 680px;
+        width: 90%;
+        margin: var(--spacing-lg);
+      }
+
+      .page-title {
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+        font-size: var(--font-size-2xl);
+        font-weight: 800;
+      }
+
+      .page-subtitle {
+        color: var(--text-secondary);
+        margin: 0 0 var(--spacing-xl);
+        font-size: var(--font-size-base);
+      }
+
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        justify-content: center;
+        margin: var(--spacing-lg) 0;
+      }
+
+      .nav-section {
+        margin-top: var(--spacing-lg);
+        display: flex;
+        gap: var(--spacing-sm);
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* 반응형 */
+      @media (max-width: 768px) {
+        .main-container {
+          padding: var(--spacing-lg);
+          margin: var(--spacing-sm);
+        }
+
+        .button-group {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .nav-section {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container fade-in-unified">
+      {% block content %}
+      <h1 class="page-title">{% block page_title %}🏥 보험 플랫폼{% endblock %}</h1>
+
+      {% if page_subtitle %}
+      <p class="page-subtitle">{% block page_subtitle %}{{ page_subtitle }}{% endblock %}</p>
+      {% endif %} {% block main_content %}
+      <!-- 페이지별 주요 내용 -->
+      {% endblock %} {% block navigation %}
+      <!-- 네비게이션 버튼들 -->
+      {% endblock %} {% endblock %}
+    </div>
+
+    <!-- 통합 JavaScript 유틸리티 -->
+    <script src="{% static 'insurance_app/js/common-utils.js' %}"></script>
+
+    <!-- 페이지별 추가 JavaScript -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- 공통 초기화 스크립트 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // 모든 칩 컨테이너 자동 초기화
+        document.querySelectorAll('.chips-container').forEach((container) => {
+          ChipController.init(container, {
+            multiple: container.dataset.multiple !== 'false',
+          });
+        });
+
+        // 폼 유효성 검사 자동 바인딩
+        document.querySelectorAll('form').forEach((form) => {
+          form.addEventListener('submit', function (e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach((field) => {
+              if (!field.value.trim()) {
+                FormUtils.validateField(field, { required: true });
+                isValid = false;
+              }
+            });
+
+            if (!isValid) {
+              e.preventDefault();
+              UIUtils.showToast('필수 항목을 모두 입력해주세요.', 'error');
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

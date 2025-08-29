@@ -771,13 +771,52 @@ def logout_view(request: HttpRequest) -> HttpResponse:
 @login_required
 def mypage(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
+        # 기본 정보 업데이트
+        user = request.user
+
+        # 이메일 업데이트
+        email = request.POST.get("email")
+        if email:
+            user.email = email
+
+        # 생년월일 업데이트
+        birth_date = request.POST.get("birth_date")
+        if birth_date:
+            user.birth_date = birth_date
+
+        # 성별 업데이트
+        gender = request.POST.get("gender")
+        if gender:
+            user.gender = gender
+
+        # 운전면허 업데이트
+        has_license = request.POST.get("has_license")
+        if has_license:
+            user.has_license = has_license.lower() == "true"
+
+        # 비밀번호 변경 처리
         form = EmailPasswordChangeForm(
             request.POST, user=request.user, instance=request.user
         )
-        if form.is_valid():
-            form.save()
-            messages.success(request, "회원정보가 수정되었습니다.")
-            return redirect("mypage")
+
+        # 기본 정보는 항상 저장
+        user.save()
+
+        # 비밀번호 변경이 요청된 경우에만 폼 검증
+        current_password = request.POST.get("current_password")
+        if current_password:  # 비밀번호 변경을 시도하는 경우
+            if form.is_valid():
+                form.save()
+                messages.success(request, "개인정보와 비밀번호가 수정되었습니다.")
+            else:
+                messages.success(
+                    request,
+                    "개인정보가 수정되었습니다. 비밀번호 변경에 오류가 있었습니다.",
+                )
+        else:
+            messages.success(request, "개인정보가 수정되었습니다.")
+
+        return redirect("mypage")
     else:
         form = EmailPasswordChangeForm(user=request.user, instance=request.user)
     return render(request, "insurance_app/mypage.html", {"form": form})

@@ -1,150 +1,127 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 - 보험 추천 시스템</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        input:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
-        .errorlist {
-            color: #e74c3c;
-            list-style: none;
-            padding: 0;
-            margin: 5px 0;
-        }
-        .links {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .links a {
-            color: #3498db;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        .messages {
-            margin-bottom: 20px;
-        }
-        .alert {
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🔑 로그인</h1>
-        
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.username.id_for_label }}">사용자명</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.username.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.password.id_for_label }}">비밀번호</label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.password.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            <button type="submit" class="btn">로그인</button>
-        </form>
-        
-        <div class="links">
-            <a href="{% url 'signup' %}">회원가입</a>
-            <a href="{% url 'home' %}">홈으로</a>
+{% extends "insurance_app/layouts/base.html" %}
+{% load static %} 
+{% block title %}로그인 - 보험 플랫폼{% endblock %} 
+{% block extra_css %}
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: var(--spacing-8) auto;
+    padding: 0 var(--spacing-4);
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+  }
+
+  .login-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--primary-100);
+    border-radius: var(--radius-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-4);
+    font-size: 32px;
+  }
+
+  .login-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .login-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-2);
+  }
+
+  .login-links {
+    text-align: center;
+    margin-top: var(--spacing-6);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--border-light);
+  }
+
+  .login-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    margin: 0 var(--spacing-3);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .login-links a:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="login-container">
+  <div class="card">
+    <div class="card-body">
+      <div class="login-header">
+        <div class="login-icon">🔑</div>
+        <h1 class="login-title">로그인</h1>
+        <p class="login-subtitle">보험 플랫폼에 오신 것을 환영합니다</p>
+      </div>
+
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}" class="form-label">아이디</label>
+          <input
+            type="text"
+            name="{{ form.username.name }}"
+            id="{{ form.username.id_for_label }}"
+            value="{{ form.username.value|default:'' }}"
+            required
+          />
+          {% if form.username.errors %}
+          <ul class="errorlist">
+            {% for error in form.username.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
         </div>
+
+        <div class="form-group">
+          <label for="{{ form.password.id_for_label }}" class="form-label">비밀번호</label>
+          <input
+            type="password"
+            name="{{ form.password.name }}"
+            id="{{ form.password.id_for_label }}"
+            required
+          />
+          {% if form.password.errors %}
+          <ul class="errorlist">
+            {% for error in form.password.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full" style="margin-top: var(--spacing-2);">로그인</button>
+      </form>
+
+      <div class="login-links">
+        <a href="{% url 'insurance_app:signup' %}">회원가입</a>
+        <a href="{% url 'insurance_app:home' %}">홈으로</a>
+      </div>
     </div>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

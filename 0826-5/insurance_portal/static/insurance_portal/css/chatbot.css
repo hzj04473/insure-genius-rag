@@ -5,52 +5,63 @@
 
 /* 카카오톡 색상 변수 */
 :root {
-  --kakao-yellow: #FEE500;
-  --kakao-yellow-dark: #F5D800;
-  --kakao-brown: #3C1E1E;
-  --kakao-gray-100: #F8F9FA;
-  --kakao-gray-200: #E9ECEF;
-  --kakao-gray-300: #DEE2E6;
-  --kakao-gray-400: #CED4DA;
-  --kakao-gray-500: #ADB5BD;
-  --kakao-gray-600: #6C757D;
+  --kakao-yellow: #fee500;
+  --kakao-yellow-dark: #f5d800;
+  --kakao-brown: #3c1e1e;
+  --kakao-gray-100: #f8f9fa;
+  --kakao-gray-200: #e9ecef;
+  --kakao-gray-300: #dee2e6;
+  --kakao-gray-400: #ced4da;
+  --kakao-gray-500: #adb5bd;
+  --kakao-gray-600: #6c757d;
   --kakao-gray-700: #495057;
-  --kakao-gray-800: #343A40;
+  --kakao-gray-800: #343a40;
   --kakao-gray-900: #212529;
-  
+
   --user-bubble: linear-gradient(135deg, var(--kakao-yellow) 0%, var(--kakao-yellow-dark) 100%);
-  --bot-bubble: #FFFFFF;
-  --nav-button: #FFFFFF;
+  --bot-bubble: #ffffff;
+  --nav-button: #ffffff;
   --nav-button-hover: var(--kakao-yellow);
-  --accent-color: #007AFF;
+  --accent-color: #007aff;
+}
+
+/* ===========================
+ * 챗봇 모달 (기존 모달 패턴과 동일)
+ * =========================== */
+#chatbot-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
 }
 
 /* ===========================
  * 챗봇 컨테이너 기본 설정
  * =========================== */
 #chatbot-container {
-  position: fixed;
-  right: 56px;
-  bottom: 56px;
   width: 1000px;
   height: 700px;
   min-width: 380px;
   min-height: 500px;
   max-width: 90vw;
-  max-height: 90vh;
-  
-  display: none;
+  max-height: 85vh;
+  margin-bottom: 20px;
+
+  display: flex;
   flex-direction: column;
   overflow: hidden;
-  resize: both;
-  
+
   background: var(--kakao-gray-100);
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 
-              0 8px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1060;
-  
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.1);
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -114,7 +125,7 @@
  * 진행상황 표시바
  * =========================== */
 .progress-bar-container {
-  background: #FFFFFF;
+  background: #ffffff;
   padding: 12px 20px;
   border-bottom: 1px solid var(--kakao-gray-200);
   display: none; /* 네비게이션 시작 시 표시 */
@@ -175,11 +186,12 @@
   padding: 20px;
   background: var(--kakao-gray-100);
   min-height: 0;
+  max-height: 100%;
 }
 
 /* 스크롤바 스타일링 */
 #chatbot-messages::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 #chatbot-messages::-webkit-scrollbar-track {
@@ -188,11 +200,18 @@
 
 #chatbot-messages::-webkit-scrollbar-thumb {
   background: var(--kakao-gray-300);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 #chatbot-messages::-webkit-scrollbar-thumb:hover {
   background: var(--kakao-gray-400);
+}
+
+/* Firefox 스크롤바 */
+#chatbot-messages {
+  scrollbar-width: thin;
+  scrollbar-color: var(--kakao-gray-300) transparent;
+  padding-bottom: 100px;
 }
 
 /* ===========================
@@ -265,26 +284,29 @@
 }
 
 .nav-buttons {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .nav-button {
   background: var(--nav-button);
   border: 2px solid var(--kakao-gray-200);
   color: var(--kakao-gray-700);
-  padding: 14px 18px;
+  padding: 12px 14px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
-  text-align: left;
+  text-align: center;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 0;
 }
 
 .nav-button:hover {
@@ -347,7 +369,7 @@
 }
 
 .action-btn.primary:hover {
-  background: #0056CC;
+  background: #0056cc;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
 }
@@ -362,12 +384,21 @@
 }
 
 .action-btn.warning {
-  background: #FF9500;
+  background: #ff9500;
   color: white;
 }
 
 .action-btn.warning:hover {
-  background: #E6850E;
+  background: #e6850e;
+}
+
+/* 네비게이션 푸터 - 버튼들을 가로로 배치 */
+.nav-footer {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
 
 /* ===========================
@@ -403,33 +434,33 @@
 }
 
 .result-card.accident-info .result-card-header {
-  background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
-  color: #1565C0;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1565c0;
 }
 
 .result-card.base-fault .result-card-header {
-  background: linear-gradient(135deg, #FFF3E0, #FFCC02);
-  color: #E65100;
+  background: linear-gradient(135deg, #fff3e0, #ffcc02);
+  color: #e65100;
 }
 
 .result-card.modification .result-card-header {
-  background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
-  color: #7B1FA2;
+  background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+  color: #7b1fa2;
 }
 
 .result-card.final-fault .result-card-header {
-  background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
-  color: #2E7D32;
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  color: #2e7d32;
 }
 
 .result-card.legal .result-card-header {
-  background: linear-gradient(135deg, #FFF8E1, #FFF176);
-  color: #F57F17;
+  background: linear-gradient(135deg, #fff8e1, #fff176);
+  color: #f57f17;
 }
 
 .result-card.precedent .result-card-header {
-  background: linear-gradient(135deg, #FCE4EC, #F8BBD9);
-  color: #C2185B;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+  color: #c2185b;
 }
 
 /* ===========================
@@ -438,7 +469,7 @@
 .fault-ratio {
   text-align: center;
   padding: 20px;
-  background: linear-gradient(135deg, #F8F9FF, #E6F3FF);
+  background: linear-gradient(135deg, #f8f9ff, #e6f3ff);
   border-radius: 12px;
   margin: 12px 0;
   border: 2px solid var(--accent-color);
@@ -466,7 +497,7 @@
   gap: 8px;
   padding: 16px 20px;
   border-top: 1px solid var(--kakao-gray-200);
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
 #chatbot-input.show {
@@ -501,7 +532,7 @@
 }
 
 #chatbot-input button:hover {
-  background: #0056CC;
+  background: #0056cc;
   transform: translateY(-1px);
 }
 
@@ -548,32 +579,41 @@
   #chatbot-container {
     width: 95vw;
     height: 90vh;
-    right: 2.5vw;
-    bottom: 2.5vh;
     border-radius: 16px;
   }
-  
+
   #chatbot-header {
     padding: 12px 16px;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
   }
-  
+
   #chatbot-messages {
     padding: 16px;
   }
-  
+
   .bubble {
     max-width: 85%;
     padding: 10px 14px;
     font-size: 13px;
   }
-  
+
   .nav-button {
     padding: 12px 16px;
     font-size: 13px;
   }
-  
+
+  .nav-footer {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .action-btn {
+    min-width: auto;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
   .fault-ratio-main {
     font-size: 28px;
   }
@@ -584,27 +624,25 @@
     border-radius: 0;
     width: 100vw;
     height: 100vh;
-    right: 0;
-    bottom: 0;
   }
-  
+
   #chatbot-header {
     border-radius: 0;
   }
-  
+
   .bubble {
     max-width: 90%;
     font-size: 13px;
   }
-  
+
   .result-card-content {
     padding: 12px;
   }
-  
+
   .fault-ratio {
     padding: 16px;
   }
-  
+
   .fault-ratio-main {
     font-size: 24px;
   }
@@ -613,31 +651,69 @@
 /* ===========================
  * 유틸리티 클래스
  * =========================== */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
 
-.mb-1 { margin-bottom: 4px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-.mb-4 { margin-bottom: 16px; }
+.mb-1 {
+  margin-bottom: 4px;
+}
+.mb-2 {
+  margin-bottom: 8px;
+}
+.mb-3 {
+  margin-bottom: 12px;
+}
+.mb-4 {
+  margin-bottom: 16px;
+}
 
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
+.mt-1 {
+  margin-top: 4px;
+}
+.mt-2 {
+  margin-top: 8px;
+}
+.mt-3 {
+  margin-top: 12px;
+}
+.mt-4 {
+  margin-top: 16px;
+}
 
-.font-weight-bold { font-weight: 600; }
-.font-weight-normal { font-weight: 400; }
+.font-weight-bold {
+  font-weight: 600;
+}
+.font-weight-normal {
+  font-weight: 400;
+}
 
-.d-none { display: none; }
-.d-block { display: block; }
-.d-flex { display: flex; }
+.d-none {
+  display: none;
+}
+.d-block {
+  display: block;
+}
+.d-flex {
+  display: flex;
+}
 
 /* 기존 호환성을 위한 클래스들 유지 */
-.msg { margin: 6px 0; }
-.msg.user { /* 기존 사용자 메시지 호환 */ }
-.msg.bot { /* 기존 봇 메시지 호환 */ }
+.msg {
+  margin: 6px 0;
+}
+.msg.user {
+  /* 기존 사용자 메시지 호환 */
+}
+.msg.bot {
+  /* 기존 봇 메시지 호환 */
+}
 
 /* ===========================
  * 로딩 및 애니메이션
@@ -666,7 +742,9 @@
 }
 
 @keyframes typingBounce {
-  0%, 60%, 100% {
+  0%,
+  60%,
+  100% {
     opacity: 0.3;
     transform: translateY(0);
   }

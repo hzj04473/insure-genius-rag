@@ -1,97 +1,136 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>회원가입 - 보험 추천 시스템</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 400px;
-            margin: 60px auto;
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 10px 32px rgba(0,0,0,0.10);
-            padding: 40px 32px;
-        }
-        .header {
-            text-align: center;
-            color: #3d437a;
-            margin-bottom: 28px;
-        }
-        h2 {
-            margin-bottom: 10px;
-            font-weight: 700;
-            font-size: 2em;
-        }
-        .signup-form label {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 6px;
-            display: block;
-        }
-        .signup-form input, .signup-form select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            margin-bottom: 18px;
-            transition: border 0.3s;
-        }
-        .signup-form input:focus {
-            border-color: #667eea;
-            outline: none;
-        }
-        .btn-signup {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: box-shadow 0.3s, transform 0.3s;
-            width: 100%;
-        }
-        .btn-signup:hover {
-            box-shadow: 0 6px 16px rgba(102,126,234,0.14);
-            transform: translateY(-2px);
-        }
-        .back-link {
-            margin-top: 24px;
-            text-align: center;
-        }
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h2>회원가입</h2>
-            <p>아직 계정이 없으신가요? 필수 정보를 입력하세요.</p>
-        </div>
-        <form method="post" class="signup-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn-signup">가입하기</button>
-        </form>
-        <div class="back-link">
-            <a href="{% url 'login' %}">이미 계정이 있으신가요? 로그인</a>
-        </div>
-        <div class="back-link" style="margin-top:8px;">
-            <a href="{% url 'home' %}">홈으로 돌아가기</a>
-        </div>
+{% extends "insurance_app/layouts/base.html" %}
+{% load static %}
+
+{% block title %}회원가입 - 보험 플랫폼{% endblock %}
+
+{% block extra_css %}
+<style>
+  .signup-container {
+    max-width: 480px;
+    margin: var(--spacing-8) auto;
+    padding: 0 var(--spacing-4);
+  }
+
+  .signup-header {
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+  }
+
+  .signup-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--primary-100);
+    border-radius: var(--radius-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-4);
+    font-size: 32px;
+  }
+
+  .signup-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .signup-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-2);
+  }
+
+  .signup-form .form-group {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .signup-links {
+    text-align: center;
+    margin-top: var(--spacing-6);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--border-light);
+  }
+
+  .signup-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    display: block;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .signup-links a:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="signup-container">
+  <div class="card">
+    <div class="card-body">
+      <div class="signup-header">
+        <div class="signup-icon">👤</div>
+        <h1 class="signup-title">회원가입</h1>
+        <p class="signup-subtitle">보험 플랫폼에 가입하여 맞춤형 서비스를 이용하세요</p>
+      </div>
+      
+      <form method="post" class="signup-form">
+        {% csrf_token %}
+        
+        {% for field in form %}
+          {% if field.field.widget.input_type == 'checkbox' %}
+            <div class="form-group checkbox-group">
+              <label class="form-label">{{ field.label }}</label>
+              <div class="checkbox-container">
+                {{ field }}
+                <label for="{{ field.id_for_label }}" class="checkbox-label">
+                  {% if field.help_text %}{{ field.help_text }}{% else %}{{ field.label }}{% endif %}
+                </label>
+              </div>
+              {% if field.errors %}
+                <ul class="errorlist">
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span style="color: var(--accent-color);">*</span>
+                {% endif %}
+              </label>
+              {{ field }}
+              
+              {% if field.help_text %}
+                <small class="helptext">{{ field.help_text }}</small>
+              {% endif %}
+              
+              {% if field.errors %}
+                <ul class="errorlist">
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary w-full" style="margin-top: var(--spacing-4);">가입하기</button>
+      </form>
+      
+      <div class="signup-links">
+        <a href="{% url 'insurance_app:login' %}">이미 계정이 있으신가요? 로그인</a>
+        <a href="{% url 'insurance_app:home' %}">홈으로 돌아가기</a>
+      </div>
     </div>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

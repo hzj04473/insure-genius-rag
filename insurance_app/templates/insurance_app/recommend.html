@@ -1,39 +1,80 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>보험 추천 - 보험 추천 시스템</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px;
-               background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px;
-                     box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 30px; text-align: center; }
-        .content { padding: 40px; }
-        .form-section { background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
-        input:focus, select:focus { outline: none; border-color: #e74c3c; }
-        .btn { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; padding: 15px 30px;
-               border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .loading { display: none; text-align: center; padding: 40px; }
-        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #e74c3c;
-                   border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .results { display: none; }
-        .market-summary { background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 25px; border-radius: 15px;
-                          margin-bottom: 30px; text-align: center; }
-        .quote-card { background: white; border: 2px solid #e0e0e0; border-radius: 15px; padding: 25px; margin: 20px 0;
-                      transition: all 0.3s; position: relative; }
-        .quote-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-        .quote-card.best { border-color: #27ae60; background: linear-gradient(135deg, #d5f4e6, #ffffff); }
-        .best-badge { position: absolute; top: -10px; right: 20px; background: #27ae60; color: white;
-                      padding: 8px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+{% extends "insurance_app/layouts/base.html" %}
+{% load static %}
+
+{% block title %}맞춤 보험 추천 - 스마트 보험료 계산기{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* 보험 추천 페이지 스타일 */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-4);
+  }
+  .loading {
+    display: none;
+    text-align: center;
+    padding: var(--spacing-10);
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-light);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .results {
+    display: none;
+  }
+  .market-summary {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-6);
+    text-align: center;
+  }
+  
+  .quote-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-6);
+    margin: var(--spacing-5) 0;
+    transition: var(--transition-normal);
+    position: relative;
+  }
+  
+  .quote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .quote-card.best {
+    border-color: var(--secondary-color);
+    background: linear-gradient(135deg, var(--secondary-50), var(--bg-card));
+  }
+  
+  .best-badge {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: var(--secondary-color);
+    color: white;
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+  }
         .company-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .company-name { font-size: 1.5em; font-weight: bold; color: #2c3e50; }
         .premium-display { text-align: right; }
@@ -64,100 +105,118 @@
         .nav-btn:hover { background: linear-gradient(135deg, #2980b9, #3498db); transform: translateY(-2px) scale(1.04); }
         .logout-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); }
         .logout-btn:hover { background: linear-gradient(135deg, #c0392b, #e74c3c); }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>💰 스마트 보험료 계산기</h1>
-            <p>11개 주요 보험사 견적을 한 번에 비교하세요!</p>
-            {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-            <button type="submit" class="nav-btn logout-btn">로그아웃</button>
-            </form>
-            {% endif %}
-            <div class="back-link">
-                <a href="{% url 'home' %}">🏠 홈으로 돌아가기</a> |
-                <a href="{% url 'insurance_recommendation' %}">🔍 AI 약관 검색</a>
-            </div>
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+  <!-- 페이지 헤더 -->
+  <div class="card" style="margin-bottom: var(--spacing-6);">
+    <div class="card-body" style="text-align: center;">
+      <div style="width: 80px; height: 80px; background: var(--secondary-100); border-radius: var(--radius-2xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-4);">
+        <span style="font-size: 40px;">💰</span>
+      </div>
+      <h1 style="font-size: var(--font-size-4xl); font-weight: var(--font-weight-extrabold); color: var(--text-primary); margin-bottom: var(--spacing-3);">
+        스마트 보험료 계산기
+      </h1>
+      <p style="font-size: var(--font-size-lg); color: var(--text-secondary); margin-bottom: var(--spacing-4);">
+        11개 주요 보험사 견적을 한 번에 비교하세요!
+      </p>
+      
+      <div style="display: flex; gap: var(--spacing-3); justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'insurance_app:insurance_recommendation' %}" class="btn btn-outline">🔍 AI 약관 검색</a>
+        <a href="{% url 'insurance_app:glossary' %}" class="btn btn-outline">📘 용어 사전</a>
+      </div>
+    </div>
+  </div>
+  {% if user.is_authenticated %}
+  <div class="card" style="margin-bottom: var(--spacing-6);">
+    <div class="card-header">
+      <h3 style="margin: 0; font-weight: var(--font-weight-bold);">👤 {{ user.username }}님의 기본 정보</h3>
+    </div>
+    <div class="card-body">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4);">
+        <div style="padding: var(--spacing-3); background: var(--bg-tertiary); border-radius: var(--radius-lg);">
+          <strong>생년월일:</strong> {{ user.birth_date|default:"미입력" }}
         </div>
+        <div style="padding: var(--spacing-3); background: var(--bg-tertiary); border-radius: var(--radius-lg);">
+          <strong>성별:</strong> {{ user.get_gender_display|default:"미입력" }}
+        </div>
+        <div style="padding: var(--spacing-3); background: var(--bg-tertiary); border-radius: var(--radius-lg);">
+          <strong>운전면허:</strong> {% if user.has_license %}보유{% else %}미보유{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
-        <div class="content">
-            {% if user.is_authenticated %}
-                <div class="user-info-card">
-                    <h3>👤 {{ user.username }}님의 기본 정보</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div>생년월일: {{ user.birth_date|default:"미입력" }}</div>
-                        <div>성별: {{ user.get_gender_display|default:"미입력" }}</div>
-                        <div>운전면허: {% if user.has_license %}보유{% else %}미보유{% endif %}</div>
-                    </div>
-                </div>
-            {% endif %}
+  <div class="card" style="margin-bottom: var(--spacing-6);">
+    <div class="card-header">
+      <h3 style="margin: 0; font-weight: var(--font-weight-bold);">📋 보험료 계산을 위한 추가 정보</h3>
+    </div>
+    <div class="card-body">
+      <form id="insuranceForm" method="post">
+        {% csrf_token %}
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="region">거주 지역</label>
+            <select id="region" name="region" class="form-input" required>
+              {% for region in regions %}
+                <option value="{{ region }}">{{ region }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="driving_experience">운전 경력 (년)</label>
+            <input type="number" id="driving_experience" name="driving_experience" class="form-input" min="0" max="50" value="5" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="accident_history">사고 이력 (건)</label>
+            <input type="number" id="accident_history" name="accident_history" class="form-input" min="0" max="10" value="0" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="annual_mileage">연간 주행거리 (km)</label>
+            <input type="number" id="annual_mileage" name="annual_mileage" class="form-input" min="1000" max="50000" value="12000" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="car_type">차량 종류</label>
+            <select id="car_type" name="car_type" class="form-input" required>
+              {% for car_type in car_types %}
+                <option value="{{ car_type }}">{{ car_type }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="coverage_level">보장 수준</label>
+            <select id="coverage_level" name="coverage_level" class="form-input" required>
+              {% for level in coverage_levels %}
+                <option value="{{ level }}" {% if level == '표준' %}selected{% endif %}>{{ level }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <div style="margin-top: var(--spacing-6);">
+          <button type="submit" class="btn btn-primary btn-lg" id="calculateBtn">
+            🔍 보험료 견적 받기
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-            <div class="form-section">
-                <h3>📋 보험료 계산을 위한 추가 정보</h3>
-                <form id="insuranceForm" method="post">
-                    {% csrf_token %}
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="region">거주 지역</label>
-                            <select id="region" name="region" required>
-                                {% for region in regions %}
-                                    <option value="{{ region }}">{{ region }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="driving_experience">운전 경력 (년)</label>
-                            <input type="number" id="driving_experience" name="driving_experience" min="0" max="50" value="5" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="accident_history">사고 이력 (건)</label>
-                            <input type="number" id="accident_history" name="accident_history" min="0" max="10" value="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="annual_mileage">연간 주행거리 (km)</label>
-                            <input type="number" id="annual_mileage" name="annual_mileage" min="1000" max="50000" value="12000" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="car_type">차량 종류</label>
-                            <select id="car_type" name="car_type" required>
-                                {% for car_type in car_types %}
-                                    <option value="{{ car_type }}">{{ car_type }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="coverage_level">보장 수준</label>
-                            <select id="coverage_level" name="coverage_level" required>
-                                {% for level in coverage_levels %}
-                                    <option value="{{ level }}" {% if level == '표준' %}selected{% endif %}>{{ level }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div style="margin-top: 30px;">
-                        <button type="submit" class="btn" id="calculateBtn">
-                            🔍 보험료 견적 받기
-                        </button>
-                    </div>
-                </form>
-            </div>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <h3 style="color: var(--text-primary); margin: var(--spacing-4) 0;">11개 보험사 견적을 계산하고 있습니다...</h3>
+    <p style="color: var(--text-secondary);">잠시만 기다려주세요. 최적의 보험료를 찾고 있어요! 💡</p>
+  </div>
 
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <h3>11개 보험사 견적을 계산하고 있습니다...</h3>
-                <p>잠시만 기다려주세요. 최적의 보험료를 찾고 있어요! 💡</p>
-                {% if user.is_authenticated %}
-                <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="nav-btn logout-btn">로그아웃</button>
-                </form>
-                {% endif %}
-            </div>
-
-            <div id="results" class="results"></div>
+  <div id="results" class="results"></div>
 
             <!-- ======================== 약관 검색 추가 영역 ======================= -->
             <div class="clause-search-section">
@@ -185,10 +244,11 @@
                 <div class="clause-search-results" id="clauseResults"></div>
             </div>
             <!-- ======================== 약관 검색 추가 끝 ======================= -->
-        </div>
-    </div>
+</div>
+{% endblock %}
 
-    <script>
+{% block extra_js %}
+<script>
         console.log('보험 추천 JS 로딩');
 
         // ================== 보험료 견적 ==================
@@ -242,7 +302,7 @@
             let html = '';
             html += `
                 <div class="user-info-card">
-                    <h3>👤 사용자 분석</h3>
+                    <h3>👤 개인 분석</h3>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
                         <div>연령대: ${data.user_info.age_category}</div>
                         <div>위험도: ${data.user_info.risk_level}</div>
@@ -350,6 +410,5 @@
                 resultArea.innerHTML = '<div style="padding: 18px;">검색 오류가 발생했습니다.</div>';
             }
         });
-    </script>
-</body>
-</html>
+</script>
+{% endblock %}

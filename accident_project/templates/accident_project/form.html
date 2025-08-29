@@ -1,22 +1,34 @@
+{% extends 'insurance_app/layouts/base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<title>교통사고 협의서 작성</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
+{% block title %}교통사고 협의서 작성 - 보험 플랫폼{% endblock %}
+
+{% block extra_css %}
 <style>
+  /* 기존 CSS 변수를 새로운 통합 시스템으로 매핑 */
   :root{
-    --bg:#f6f7fb; --card:#fff; --text:#1d2a39; --muted:#6b7688; --line:#e7edf3;
-    --primary:#2b78c5; --primary-2:#245f99; --chip:#eef2f7;
-    --radius:16px; --shadow:0 10px 26px rgba(0,0,0,.06);
-    --danger:#d94b48;
+    --bg: var(--bg-secondary);
+    --card: var(--bg-card);
+    --text: var(--text-primary);
+    --muted: var(--text-muted);
+    --line: var(--border-light);
+    --primary: var(--primary-color);
+    --primary-2: var(--primary-dark);
+    --chip: var(--bg-tertiary);
+    --radius: var(--radius-xl);
+    --shadow: var(--shadow-sm);
+    --danger: var(--accent-color);
   }
-  *{box-sizing:border-box}
-  body{margin:0; background:var(--bg); color:var(--text);
-       font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR",Arial,sans-serif;}
-  .wrap{max-width:1100px; margin:20px auto; padding:0 16px}
+  
+  /* 페이지 배경을 통합 시스템과 맞춤 */
+  body {
+    background: var(--bg-primary) !important;
+  }
+  
+  /* 메인 컨테이너 */
+  .wrap{max-width:1100px; margin:0 auto; padding:0 var(--spacing-4);}
+  
+  /* 기존 스타일 유지 */
 
   .topbar{display:flex; align-items:center; justify-content:space-between; margin:6px 0 14px}
   .back{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px;
@@ -24,11 +36,12 @@
   .back:hover{background:#e7edf6}
   .tools{display:none}
 
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px;
+  /* 폼 내부 버튼만 스타일링 (상단 네비게이션 버튼과 구분) */
+  .wrap .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px;
        border:1px solid #e5e9f2; background:#eef2f7; color:#243043; text-decoration:none; cursor:pointer; font-weight:700}
-  .btn[disabled]{opacity:.55; cursor:not-allowed}
-  .btn-primary{background:var(--primary); color:#fff; border-color:transparent}
-  .btn-primary:hover{background:var(--primary-2)}
+  .wrap .btn[disabled]{opacity:.55; cursor:not-allowed}
+  .wrap .btn-primary{background:var(--primary); color:#fff; border-color:transparent}
+  .wrap .btn-primary:hover{background:var(--primary-2)}
 
   .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; border:1px solid var(--line)}
   .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
@@ -64,12 +77,22 @@
   .blocker{position:relative}
   .blocker::after{content:"";position:absolute;inset:0;background:transparent;display:none;z-index:5}
   .blocker.blocked::after{display:block;cursor:not-allowed}
+  .blocker.blocked fieldset{opacity:0.4;pointer-events:none}
+  .blocker.blocked fieldset:disabled{opacity:0.4}
 
   .error{margin-top:6px; color:var(--danger); font-size:13px}
   .invalid{border-color:var(--danger)!important}
 </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
+<div class="container-unified">
+  <!-- 페이지 제목 -->
+  <div class="page-header-unified">
+    <h1 class="title-unified">✍️ 교통사고 협의서 작성</h1>
+    <p class="subtitle-unified">안전하고 정확한 협의서 작성</p>
+  </div>
+
 <div class="wrap">
 
   <div class="topbar">
@@ -356,7 +379,11 @@
 <!-- 서버 주입 값 -->
 {{ part_anchors|default_if_none:"{}"|json_script:"form-part-anchors" }}
 {{ label_colors|default_if_none:"{}"|json_script:"form-label-colors" }}
+</div>
+</div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 (function(){
   const $ = (s, r=document)=>r.querySelector(s);
@@ -583,76 +610,19 @@ const EDIT=(function(){const el=document.getElementById('edit-data'); if(!el) re
 function setVal(id,v){const el=document.getElementById(id); if(el!=null && v!=null) el.value=v;}
 function toLocalDT(s){ if(!s) return ''; s=String(s).replace('T',' '); const m=s.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})/); return m?`${m[1]}T${m[2]}`:s; }
 function activateChips(containerId, values){ if(!Array.isArray(values)) return; values.forEach(v=>{const chip=document.querySelector(`#${containerId} .chip[data-value="${v}"]`); if(chip) chip.classList.add('selected');}); }
-function activateKindByData(F){ const ccCnt=Array.isArray(F.type_cc)?F.type_cc.length:0; const cpCnt=Array.isArray(F.type_cp)?F.type_cp.length:0; const to=(cpCnt>0 && ccCnt===0)?'cp':'cc'; const tab=document.querySelector(`#accident-kind .chip[data-kind="${to}"]`); if(tab) tab.click(); }
-
+function activateKindByData(F){ const ccCnt=Array.isArray(F.type_cc)?F.type_cc.length:0; const cpCnt=Array.isArray(F.type_cp)?F.type_cp.length:0; if(cpCnt>ccCnt){document.querySelector('#accident-kind .chip[data-kind="cp"]')?.click();} }
 if(EDIT){
-  setVal('accident_date', toLocalDT(EDIT.accident_date));
-  setVal('location', EDIT.location);
-  setVal('a_plate', EDIT.a_plate); setVal('a_insurer', EDIT.a_insurer); setVal('a_name', EDIT.a_name);
-  setVal('a_id', EDIT.a_id); setVal('a_phone', EDIT.a_phone); setVal('a_address', EDIT.a_address);
-  setVal('a_male', EDIT.a_male); setVal('a_female', EDIT.a_female); setVal('a_damage_desc', EDIT.a_damage_desc);
-  setVal('b_plate', EDIT.b_plate); setVal('b_insurer', EDIT.b_insurer); setVal('b_name', EDIT.b_name);
-  setVal('b_id', EDIT.b_id); setVal('b_phone', EDIT.b_phone); setVal('b_address', EDIT.b_address);
-  setVal('b_male', EDIT.b_male); setVal('b_female', EDIT.b_female); setVal('b_damage_desc', EDIT.b_damage_desc);
-  setVal('p_name', EDIT.p_name); setVal('p_id', EDIT.p_id); setVal('p_phone', EDIT.p_phone);
-  setVal('p_address', EDIT.p_address); setVal('p_damage_desc', EDIT.p_damage_desc);
-
-  activateChips('weather-chips', EDIT.weather);
-  activateChips('chips-cc', EDIT.type_cc);
-  activateChips('chips-cp', EDIT.type_cp);
-  activateChips('chips-cause', EDIT.cause);
+  setVal('accident_date',toLocalDT(EDIT.accident_date));
+  ['location','a_plate','a_insurer','a_name','a_id','a_phone','a_address','a_male','a_female','a_damage_desc','b_plate','b_insurer','b_name','b_id','b_phone','b_address','b_male','b_female','b_damage_desc','p_name','p_id','p_phone','p_address','p_damage_desc','accident_description'].forEach(k=>setVal(k,EDIT[k]));
+  activateChips('weather-chips',EDIT.weather);
+  activateChips('chips-cc',EDIT.type_cc);
+  activateChips('chips-cp',EDIT.type_cp);
+  activateChips('chips-cause',EDIT.cause);
   activateKindByData(EDIT);
+  if(EDIT.a_parts_json){try{const parts=JSON.parse(EDIT.a_parts_json); parts.forEach(p=>{const chip=document.querySelector(`#a-parts-chips .chip[data-value="${p}"]`); if(chip){chip.classList.add('selected'); aPartSet.add(p);}}); renderDots(document.getElementById('a-overlay'),aPartSet);}catch(_){}}
+  if(EDIT.b_parts_json){try{const parts=JSON.parse(EDIT.b_parts_json); parts.forEach(p=>{const chip=document.querySelector(`#b-parts-chips .chip[data-value="${p}"]`); if(chip){chip.classList.add('selected'); bPartSet.add(p);}}); renderDots(document.getElementById('b-overlay'),bPartSet);}catch(_){}}
 }
-
-// --- 이미지 영역에 overlay를 정확히 맞추기
-function fitOverlayToImage(imgId, overlayId){
-  const img = document.getElementById(imgId);
-  const ov  = document.getElementById(overlayId);
-  const parent = ov.parentElement;              // .figure.big
-
-  // .figure.big 는 position:relative 이어야 함 (이미 그렇게 되어 있음)
-  ov.style.position = 'absolute';
-
-  function sync(){
-    // 이미지의 화면 내 위치/크기
-    const ir = img.getBoundingClientRect();
-    const pr = parent.getBoundingClientRect();
-    // parent(figure) 기준 좌표로 환산하여 overlay 위치/크기 지정
-    ov.style.left   = (ir.left - pr.left) + 'px';
-    ov.style.top    = (ir.top  - pr.top ) + 'px';
-    ov.style.width  = ir.width  + 'px';
-    ov.style.height = ir.height + 'px';
-  }
-  // 최초/리사이즈/이미지 로드 시 동기화
-  if (img.complete) sync();
-  img.addEventListener('load', sync);
-  window.addEventListener('resize', sync);
-}
-
-// 페이지 초기화 시 호출 (A/B 둘 다)
-fitOverlayToImage('a-img','a-overlay');
-fitOverlayToImage('b-img','b-overlay');
-
-// (form.html) activatePartsFromJson 함수 교체
-function activatePartsFromJson(jsonStr, chipsId, overlayId, setRef){
-  try{
-    const arr = JSON.parse(jsonStr || '[]');
-    if(Array.isArray(arr)){
-      arr.forEach(name=>{
-        const chip = document.querySelector(`#${chipsId} .chip[data-value="${name}"]`);
-        if(chip && !chip.classList.contains('selected')) chip.click(); // ← selected 로 통일
-        setRef.add(name);
-      });
-      renderDots(document.getElementById(overlayId), setRef);
-    }
-  }catch(_){}
-}
-
-
-
-
 </script>
 
 {{ F|json_script:"edit-data" }}
-</body>
-</html>
+{% endblock %}

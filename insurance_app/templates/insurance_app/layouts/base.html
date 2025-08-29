@@ -1,0 +1,348 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}보험 플랫폼{% endblock %}</title>
+
+    <!-- 통합 디자인 시스템 CSS -->
+    <link rel="stylesheet" href="{% static 'insurance_app/css/unified-theme.css' %}" />
+
+    <!-- 네비게이션 강제 스타일 -->
+    <style>
+      /* 네비게이션 강제 표시 스타일 */
+      .layout-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+      }
+      
+      .nav {
+        display: flex !important;
+        gap: 8px;
+        align-items: center;
+      }
+      
+      .nav-item {
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.15s ease-out;
+        white-space: nowrap;
+      }
+      
+      .nav-item:hover {
+        background: #eff6ff;
+        color: #2563eb;
+        transform: translateY(-1px);
+      }
+      
+      .nav-item.active {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+      
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease-out;
+        white-space: nowrap;
+      }
+      
+      .btn-ghost {
+        background: transparent;
+        color: #4b5563;
+      }
+      
+      .btn-ghost:hover {
+        background: #f1f5f9;
+        color: #1f2937;
+      }
+      
+      .btn-outline {
+        background: transparent;
+        color: #2563eb;
+        border-color: #2563eb;
+      }
+      
+      .btn-outline:hover {
+        background: #2563eb;
+        color: white;
+      }
+      
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+      }
+      
+      .btn-primary:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+      }
+      
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      
+      /* 모바일 반응형 */
+      @media (max-width: 767px) {
+        #mobile-menu-btn {
+          display: inline-flex !important;
+        }
+        
+        .nav {
+          display: none !important;
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: white;
+          box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+          border-radius: 8px;
+          padding: 8px;
+          min-width: 200px;
+          z-index: 1000;
+          border: 1px solid #e2e8f0;
+          flex-direction: column;
+          gap: 4px;
+        }
+        
+        .nav.show {
+          display: flex !important;
+        }
+        
+        .nav-item {
+          padding: 12px 16px;
+          text-align: left;
+        }
+        
+        .nav-item:hover {
+          transform: none;
+        }
+      }
+    </style>
+
+    <!-- 페이지별 추가 CSS -->
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <div class="layout-container">
+      <!-- 헤더 -->
+      <header class="layout-header" style="display: block !important; background: white !important; border-bottom: 1px solid #ccc !important; padding: 10px 0 !important;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; display: block !important;">
+          <div style="display: flex !important; align-items: center !important; justify-content: space-between !important; height: 64px !important; background: white !important;">
+            <!-- 로고 -->
+            <div style="display: flex; align-items: center; gap: var(--spacing-3)">
+              <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-2)">
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    background: var(--primary-color);
+                    border-radius: var(--radius-lg);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: var(--font-weight-bold);
+                  "
+                >
+                  🏥
+                </div>
+                <span
+                  style="
+                    font-size: var(--font-size-lg);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--text-primary);
+                  "
+                >
+                  보험 플랫폼
+                </span>
+              </a>
+            </div>
+
+            <!-- 메인 네비게이션 -->
+            <nav class="nav" id="main-nav" style="display: flex; gap: 8px; align-items: center;">
+              <a href="/" 
+                 class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                🏠 홈
+              </a>
+              <a href="{% url 'insurance_app:insurance_recommendation' %}" 
+                 class="nav-item {% if request.resolver_match.url_name == 'insurance_recommendation' %}active{% endif %}">
+                🤖 AI 검색
+              </a>
+              <a href="{% url 'insurance_app:recommend_insurance' %}" 
+                 class="nav-item {% if request.resolver_match.url_name == 'recommend_insurance' %}active{% endif %}">
+                📊 보험 추천
+              </a>
+              <a href="{% url 'insurance_app:glossary' %}" 
+                 class="nav-item {% if request.resolver_match.url_name == 'glossary' %}active{% endif %}">
+                📘 용어 사전
+              </a>
+              <a href="{% url 'accident_project:agreement_new' %}" 
+                 class="nav-item {% if request.resolver_match.app_name == 'accident_project' %}active{% endif %}">
+                ✍️ 협의서
+              </a>
+            </nav>
+
+            <!-- 모바일 메뉴 버튼 -->
+            <button id="mobile-menu-btn" class="btn btn-ghost btn-sm" style="display: none;">
+              ☰
+            </button>
+
+            <!-- 계정 메뉴 -->
+            <div style="display: flex; align-items: center; gap: var(--spacing-2)">
+              {% if user.is_authenticated %}
+              <a href="{% url 'insurance_app:mypage' %}" class="btn btn-ghost btn-sm">👤 마이페이지</a>
+              <form action="{% url 'insurance_app:logout' %}" method="post" style="display: inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn-sm">로그아웃</button>
+              </form>
+              {% else %}
+              <a href="{% url 'insurance_app:login' %}" class="btn btn-ghost btn-sm">로그인</a>
+              <a href="{% url 'insurance_app:signup' %}" class="btn btn-primary btn-sm">회원가입</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 메인 콘텐츠 -->
+      <main class="layout-main">{% block content %} {% endblock %}</main>
+
+      <!-- 푸터 -->
+      <footer class="layout-footer">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center">
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              gap: var(--spacing-6);
+              margin-bottom: var(--spacing-4);
+              flex-wrap: wrap;
+            "
+          >
+            <a
+              href="/"
+              style="color: var(--text-muted); text-decoration: none; font-size: var(--font-size-sm); transition: var(--transition-fast);"
+              onmouseover="this.style.color='var(--primary-color)'"
+              onmouseout="this.style.color='var(--text-muted)'"
+            >
+              홈
+            </a>
+            <a
+              href="{% url 'insurance_app:insurance_recommendation' %}"
+              style="color: var(--text-muted); text-decoration: none; font-size: var(--font-size-sm); transition: var(--transition-fast);"
+              onmouseover="this.style.color='var(--primary-color)'"
+              onmouseout="this.style.color='var(--text-muted)'"
+            >
+              AI 약관 검색
+            </a>
+            <a
+              href="{% url 'insurance_app:recommend_insurance' %}"
+              style="color: var(--text-muted); text-decoration: none; font-size: var(--font-size-sm); transition: var(--transition-fast);"
+              onmouseover="this.style.color='var(--primary-color)'"
+              onmouseout="this.style.color='var(--text-muted)'"
+            >
+              보험 추천
+            </a>
+            <a
+              href="{% url 'insurance_app:glossary' %}"
+              style="color: var(--text-muted); text-decoration: none; font-size: var(--font-size-sm); transition: var(--transition-fast);"
+              onmouseover="this.style.color='var(--primary-color)'"
+              onmouseout="this.style.color='var(--text-muted)'"
+            >
+              용어 사전
+            </a>
+            <a
+              href="{% url 'accident_project:agreement_new' %}"
+              style="color: var(--text-muted); text-decoration: none; font-size: var(--font-size-sm); transition: var(--transition-fast);"
+              onmouseover="this.style.color='var(--primary-color)'"
+              onmouseout="this.style.color='var(--text-muted)'"
+            >
+              사고 협의서
+            </a>
+          </div>
+          <div style="padding-top: var(--spacing-4); border-top: 1px solid var(--border-light)">
+            <p style="margin: 0; color: var(--text-muted); font-size: var(--font-size-sm)">
+              © 2024 AI 보험 플랫폼. 신뢰할 수 있는 보험 서비스를 제공합니다.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- 공통 JavaScript -->
+    <script src="{% static 'insurance_app/js/modal-utils.js' %}"></script>
+    <script src="{% static 'insurance_app/js/common-utils.js' %}"></script>
+
+    <!-- 페이지별 추가 JavaScript -->
+    {% block extra_js %}{% endblock %}
+
+
+    <!-- 반응형 네비게이션 스크립트 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const nav = document.getElementById('main-nav');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        let isMenuOpen = false;
+
+        // 모바일 메뉴 토글
+        if (mobileMenuBtn) {
+          mobileMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+              nav.classList.add('show');
+            } else {
+              nav.classList.remove('show');
+            }
+          });
+        }
+
+        // 메뉴 외부 클릭 시 닫기
+        document.addEventListener('click', function(event) {
+          if (isMenuOpen && nav && !nav.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+            isMenuOpen = false;
+            nav.classList.remove('show');
+          }
+        });
+
+        // 메뉴 항목 클릭 시 모바일에서 메뉴 닫기
+        if (nav) {
+          nav.addEventListener('click', function(e) {
+            if (e.target.classList.contains('nav-item') && window.innerWidth < 768) {
+              isMenuOpen = false;
+              nav.classList.remove('show');
+            }
+          });
+        }
+
+        // 화면 크기 변경 시 메뉴 상태 리셋
+        window.addEventListener('resize', function() {
+          if (window.innerWidth >= 768) {
+            isMenuOpen = false;
+            nav.classList.remove('show');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

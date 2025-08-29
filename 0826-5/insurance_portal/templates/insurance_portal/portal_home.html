@@ -1,13 +1,184 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <title>보험 포털</title>
-</head>
-<body>
-  <main style="padding:24px">
-    <h1>보험 포털 홈</h1>
-    <p>이 페이지는 전역 번들이 주입되는지 확인하는 테스트 페이지입니다.</p>
-  </main>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>보험 포털 - 지식 베이스</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 통합 디자인 시스템 CSS -->
+    <link rel="stylesheet" href="{% static 'insurance_app/css/unified-theme.css' %}" />
+  </head>
+  <body>
+    <div class="layout-container">
+      <!-- 간단한 헤더 -->
+      <header class="layout-header">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 var(--spacing-4)">
+          <div style="display: flex; align-items: center; justify-content: space-between; height: 64px">
+            <div style="display: flex; align-items: center; gap: var(--spacing-3)">
+              <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-2)">
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    background: var(--secondary-color);
+                    border-radius: var(--radius-lg);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: var(--font-weight-bold);
+                  "
+                >
+                  📚
+                </div>
+                <span
+                  style="
+                    font-size: var(--font-size-lg);
+                    font-weight: var(--font-weight-bold);
+                    color: var(--text-primary);
+                  "
+                >
+                  보험 포털
+                </span>
+              </a>
+            </div>
+            <a href="/" class="btn btn-outline btn-sm">← 메인으로</a>
+          </div>
+        </div>
+      </header>
+
+      <!-- 메인 콘텐츠 -->
+      <main class="layout-main">
+        <div class="card" style="text-align: center; margin-bottom: var(--spacing-8)">
+          <div class="card-body">
+            <div
+              style="
+                width: 80px;
+                height: 80px;
+                background: var(--secondary-100);
+                border-radius: var(--radius-2xl);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto var(--spacing-4);
+              "
+            >
+              <span style="font-size: 40px">📚</span>
+            </div>
+            <h1
+              style="
+                font-size: var(--font-size-3xl);
+                font-weight: var(--font-weight-extrabold);
+                color: var(--text-primary);
+                margin-bottom: var(--spacing-3);
+              "
+            >
+              보험 지식 포털
+            </h1>
+            <p style="font-size: var(--font-size-lg); color: var(--text-secondary); margin-bottom: var(--spacing-6)">
+              보험 관련 지식과 정보를 체계적으로 정리한 포털입니다.
+              <br />
+              전역 번들 시스템이 정상적으로 작동하는지 확인할 수 있습니다.
+            </p>
+
+            <div
+              style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-4)"
+            >
+              <div class="card">
+                <div class="card-body" style="text-align: center">
+                  <div style="font-size: 32px; margin-bottom: var(--spacing-3)">📖</div>
+                  <h3 style="font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-2)">지식 베이스</h3>
+                  <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin: 0">
+                    보험 관련 전문 지식과 가이드라인
+                  </p>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-body" style="text-align: center">
+                  <div style="font-size: 32px; margin-bottom: var(--spacing-3)">📰</div>
+                  <h3 style="font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-2)">주간 뉴스</h3>
+                  <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin: 0">
+                    최신 보험 업계 동향과 뉴스
+                  </p>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-body" style="text-align: center">
+                  <div style="font-size: 32px; margin-bottom: var(--spacing-3)">💬</div>
+                  <h3 style="font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-2)">챗봇 상담</h3>
+                  <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin: 0">
+                    AI 기반 실시간 보험 상담 서비스
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 시스템 상태 -->
+        <div class="card">
+          <div class="card-header">
+            <h3 style="margin: 0; font-weight: var(--font-weight-bold)">시스템 상태</h3>
+          </div>
+          <div class="card-body">
+            <div
+              style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4)"
+            >
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    background: var(--secondary-color);
+                    border-radius: 50%;
+                    margin: 0 auto var(--spacing-2);
+                  "
+                ></div>
+                <div style="font-weight: var(--font-weight-medium)">포털 연동</div>
+                <div style="color: var(--text-muted); font-size: var(--font-size-sm)">정상 작동</div>
+              </div>
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    background: var(--secondary-color);
+                    border-radius: 50%;
+                    margin: 0 auto var(--spacing-2);
+                  "
+                ></div>
+                <div style="font-weight: var(--font-weight-medium)">번들 시스템</div>
+                <div style="color: var(--text-muted); font-size: var(--font-size-sm)">연결됨</div>
+              </div>
+              <div style="text-align: center">
+                <div
+                  style="
+                    width: 12px;
+                    height: 12px;
+                    background: var(--secondary-color);
+                    border-radius: 50%;
+                    margin: 0 auto var(--spacing-2);
+                  "
+                ></div>
+                <div style="font-weight: var(--font-weight-medium)">디자인 통합</div>
+                <div style="color: var(--text-muted); font-size: var(--font-size-sm)">완료</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- 푸터 -->
+      <footer class="layout-footer">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center">
+          <p style="margin: 0; color: var(--text-muted); font-size: var(--font-size-sm)">
+            © 2024 보험 포털. 통합 디자인 시스템이 적용되었습니다.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
 </html>

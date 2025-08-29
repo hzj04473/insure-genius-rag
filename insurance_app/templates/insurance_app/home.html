@@ -1,59 +1,311 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>보험 추천 시스템</title>
-  <style>
-    body{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR",Arial,sans-serif;margin:0;padding:0;
-         background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .container{background:white;padding:50px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.1);text-align:center;max-width:680px}
-    h1{color:#2c3e50;margin-bottom:10px;font-size:2.2em}
-    p.sub{color:#4a5a70;margin:0 0 18px}
-    .btn{display:inline-block;padding:14px 24px;margin:8px;background:linear-gradient(135deg,#3498db,#2980b9);
-         color:white;text-decoration:none;border-radius:999px;transition:.2s;font-weight:800}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(52,152,219,.25)}
-    .btn.sec{background:linear-gradient(135deg,#27ae60,#2ecc71)}
-    .btn.ter{background:linear-gradient(135deg,#8e44ad,#9b59b6)}
-    .nav{margin-top:18px;display:flex;gap:10px;justify-content:center}
-    .nav a, .nav button{padding:8px 16px;border-radius:999px;border:1px solid #e5e9f2;background:#eef2f7;color:#243043;
-                        text-decoration:none;font-weight:700;cursor:pointer}
-    .logout{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border-color:transparent}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🏥 보험 추천 시스템</h1>
-    <p class="sub">AI 기반 맞춤형 보험 상품 추천 및 약관 검색 서비스</p>
-
-    <div>
-      <a class="btn ter" href="{% url 'insurance_app:glossary' %}">📘 약관 용어 사전</a>
-      <a class="btn" href="{% url 'insurance_app:insurance_recommendation' %}">🔍 AI 약관 검색</a>
-      <a class="btn sec" href="{% url 'insurance_app:recommend_insurance' %}">📊 보험 추천</a>
+{% extends "insurance_app/layouts/base.html" %} {% load static %} {% block title %}AI 보험 플랫폼 - 신뢰할 수 있는 보험
+서비스{% endblock %} {% block content %}
+<!-- 히어로 섹션 -->
+<div class="card" style="text-align: center; margin-bottom: var(--spacing-8)">
+  <div class="card-body" style="padding: var(--spacing-12) var(--spacing-6)">
+    <div style="margin-bottom: var(--spacing-6)">
+      <div
+        style="
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 80px;
+          height: 80px;
+          background: var(--primary-100);
+          border-radius: var(--radius-2xl);
+          margin-bottom: var(--spacing-4);
+        "
+      >
+        <span style="font-size: 40px">🏥</span>
+      </div>
+      <h1
+        style="
+          font-size: var(--font-size-4xl);
+          font-weight: var(--font-weight-extrabold);
+          color: var(--text-primary);
+          margin-bottom: var(--spacing-3);
+        "
+      >
+        AI 보험 플랫폼
+      </h1>
+      <p
+        style="
+          font-size: var(--font-size-lg);
+          color: var(--text-secondary);
+          margin-bottom: var(--spacing-6);
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+        "
+      >
+        인공지능 기술로 더 쉽고 정확한 보험 서비스를 제공합니다.
+        <br />
+        복잡한 보험 약관도 간단한 질문으로 해결하세요.
+      </p>
     </div>
 
-    <div style="margin-top:8px">
-      <a class="btn sec" href="{% url 'accident_project:agreement_new' %}">✍️ 협의서 작성</a>
-      <a class="btn" href="{% url 'accident_project:mypage_agreements' %}">📂 내 협의서</a>
+    <!-- 주요 기능 버튼들 -->
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-4);
+        margin-bottom: var(--spacing-6);
+      "
+    >
+      <a
+        href="{% url 'insurance_app:insurance_recommendation' %}"
+        class="btn btn-primary btn-lg menu-button"
+        style="
+          padding: var(--spacing-6) var(--spacing-8);
+          text-decoration: none;
+          text-align: center;
+          position: relative;
+        "
+      >
+        <div>
+          <div
+            style="
+              font-weight: var(--font-weight-bold);
+              font-size: var(--font-size-xl);
+              margin-bottom: var(--spacing-2);
+            "
+          >
+            AI 약관 검색 →
+          </div>
+          <div style="font-size: var(--font-size-base); opacity: 0.9">자연어로 보험 약관 질문하기</div>
+        </div>
+      </a>
+
+      <a
+        href="{% url 'insurance_app:recommend_insurance' %}"
+        class="btn btn-secondary btn-lg menu-button"
+        style="
+          padding: var(--spacing-6) var(--spacing-8);
+          text-decoration: none;
+          text-align: center;
+          position: relative;
+        "
+      >
+        <div>
+          <div
+            style="
+              font-weight: var(--font-weight-bold);
+              font-size: var(--font-size-xl);
+              margin-bottom: var(--spacing-2);
+            "
+          >
+            맞춤 보험 추천 →
+          </div>
+          <div style="font-size: var(--font-size-base); opacity: 0.9">개인 맞춤형 보험 상품 찾기</div>
+        </div>
+      </a>
     </div>
 
-    <div class="nav">
-      {% if user.is_authenticated %}
-        <a href="{% url 'insurance_app:mypage' %}">👤 마이페이지</a>
-        <form action="{% url 'insurance_app:logout' %}" method="post" style="display:inline">
-          {% csrf_token %}<button class="logout" type="submit">로그아웃</button>
-        </form>
-      {% else %}
-        <a href="{% url 'insurance_app:signup' %}">회원가입</a>
-        <a href="{% url 'insurance_app:login' %}">로그인</a>
-      {% endif %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-4)">
+      <a
+        href="{% url 'insurance_app:glossary' %}"
+        class="btn btn-info btn-lg menu-button"
+        style="
+          padding: var(--spacing-6) var(--spacing-8);
+          text-decoration: none;
+          text-align: center;
+          position: relative;
+        "
+      >
+        <div>
+          <div
+            style="
+              font-weight: var(--font-weight-bold);
+              font-size: var(--font-size-xl);
+              margin-bottom: var(--spacing-2);
+            "
+          >
+            보험 용어 사전 →
+          </div>
+          <div style="font-size: var(--font-size-base); opacity: 0.9">어려운 보험 용어 쉽게 찾기</div>
+        </div>
+      </a>
+
+      <a
+        href="{% url 'accident_project:agreement_new' %}"
+        class="btn btn-warning btn-lg menu-button"
+        style="
+          padding: var(--spacing-6) var(--spacing-8);
+          text-decoration: none;
+          text-align: center;
+          position: relative;
+        "
+      >
+        <div>
+          <div
+            style="
+              font-weight: var(--font-weight-bold);
+              font-size: var(--font-size-xl);
+              margin-bottom: var(--spacing-2);
+            "
+          >
+            사고 협의서 작성 →
+          </div>
+          <div style="font-size: var(--font-size-base); opacity: 0.9">디지털 교통사고 협의서</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- 서비스 특징 -->
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+  "
+>
+  <div class="card">
+    <div class="card-body" style="text-align: center">
+      <div
+        style="
+          width: 60px;
+          height: 60px;
+          background: var(--primary-100);
+          border-radius: var(--radius-xl);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto var(--spacing-4);
+        "
+      >
+        <span style="font-size: 24px">🎯</span>
+      </div>
+      <h3
+        style="
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          margin-bottom: var(--spacing-2);
+          color: var(--text-primary);
+        "
+      >
+        정확한 AI 분석
+      </h3>
+      <p style="color: var(--text-secondary); margin: 0; font-size: var(--font-size-sm)">
+        실제 보험 약관을 학습한 AI가 정확하고 신뢰할 수 있는 답변을 제공합니다.
+      </p>
     </div>
   </div>
 
-  <!-- ✅ 아카이브에서 제공된 토글/FAB UI + 관련 스크립트/모달 일체 삽입 -->
-  {% include "insurance_portal/partials/_portal_inject.html" %}
+  <div class="card">
+    <div class="card-body" style="text-align: center">
+      <div
+        style="
+          width: 60px;
+          height: 60px;
+          background: var(--secondary-100);
+          border-radius: var(--radius-xl);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto var(--spacing-4);
+        "
+      >
+        <span style="font-size: 24px">⚡</span>
+      </div>
+      <h3
+        style="
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          margin-bottom: var(--spacing-2);
+          color: var(--text-primary);
+        "
+      >
+        빠른 처리
+      </h3>
+      <p style="color: var(--text-secondary); margin: 0; font-size: var(--font-size-sm)">
+        복잡한 보험 업무를 몇 분 안에 처리할 수 있어 시간을 크게 절약합니다.
+      </p>
+    </div>
+  </div>
 
-  <!-- ⚠️ 이전에 시도했던 loader.js/loader_strict.js, window.PORTAL_MENU 등의 임시 스크립트는 모두 제거하세요 -->
-</body>
-</html>
+  <div class="card">
+    <div class="card-body" style="text-align: center">
+      <div
+        style="
+          width: 60px;
+          height: 60px;
+          background: var(--accent-100);
+          border-radius: var(--radius-xl);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto var(--spacing-4);
+        "
+      >
+        <span style="font-size: 24px">🛡️</span>
+      </div>
+      <h3
+        style="
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-bold);
+          margin-bottom: var(--spacing-2);
+          color: var(--text-primary);
+        "
+      >
+        안전한 서비스
+      </h3>
+      <p style="color: var(--text-secondary); margin: 0; font-size: var(--font-size-sm)">
+        개인정보 보호와 데이터 보안을 최우선으로 하는 안전한 플랫폼입니다.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- 계정 관련 -->
+{% if user.is_authenticated %}
+<div class="card">
+  <div class="card-body" style="text-align: center">
+    <h3
+      style="
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--spacing-4);
+        color: var(--text-primary);
+      "
+    >
+      안녕하세요, {{ user.username }}님! 👋
+    </h3>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-6)">
+      개인 맞춤 서비스를 이용하실 수 있습니다.
+    </p>
+    <div style="display: flex; gap: var(--spacing-3); justify-content: center; flex-wrap: wrap">
+      <a href="{% url 'insurance_app:mypage' %}" class="btn btn-primary">👤 마이페이지</a>
+      <a href="{% url 'accident_project:mypage_agreements' %}" class="btn btn-outline">📂 내 협의서</a>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="card">
+  <div class="card-body" style="text-align: center">
+    <h3
+      style="
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--spacing-4);
+        color: var(--text-primary);
+      "
+    >
+      더 많은 서비스를 이용해보세요
+    </h3>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-6)">
+      회원가입하시면 개인 맞춤 보험 추천과 이력 관리 서비스를 이용하실 수 있습니다.
+    </p>
+    <div style="display: flex; gap: var(--spacing-3); justify-content: center; flex-wrap: wrap">
+      <a href="{% url 'insurance_app:signup' %}" class="btn btn-primary">회원가입</a>
+      <a href="{% url 'insurance_app:login' %}" class="btn btn-outline">로그인</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- 아카이브 포털 연동 (기존 기능 유지) -->
+{% include "insurance_portal/partials/_portal_inject.html" %} {% endblock %}
