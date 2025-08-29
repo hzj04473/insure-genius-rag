@@ -1,18 +1,35 @@
+# Python
 .venv/
 venv/
 __pycache__/
 *.py[cod]
 *.pyd
-.DS_Store
-.idea/
-.vscode/
+*.pyc
+*.pyo
+*.pyw
+.Python
+
+# Django
 db.sqlite3
 media/
 staticfiles/
+/data
+
+# Environment variables
+.env
+*.env
+
+# IDE and editors
+.DS_Store
+.idea/
+.vscode/
+.ipynb_checkpoints/
+
+# Build and distribution
 dist/
 build/
 node_modules/
-.env
-*.env
+
+# Kiro and Claude
 .kiro
 .claude
